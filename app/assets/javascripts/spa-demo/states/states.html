@@ -1,0 +1,24 @@
+<div>
+  <h3>States</h3>
+  <span>(from spa/demo/states/states.html)</span>
+
+  <form>
+    <div>
+      <label>Name:</label>
+      <input name="name" ng-model="statesVM.state.name" required="required" />
+    </div>
+    <button ng-if="!statesVM.state.id"
+            type="submit"
+            ng-click="statesVM.create()">Add State</button>
+    <div ng-if="statesVM.state.id">
+      <button type="submit" ng-click="statesVM.update()">Update State</button>
+      <button type="submit" ng-click="statesVM.remove()">Delete State</button>
+    </div>
+  </form>
+
+  <ul>
+    <li ng-repeat="state in statesVM.states | orderBy:'name'">
+      <a ng-click="statesVM.edit(state)">{{ state.name }}</a>
+    </li>
+  </ul>
+</div>

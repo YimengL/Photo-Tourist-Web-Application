@@ -13,3 +13,8 @@
 //= require spa-demo/foos/foos.service
 //= require spa-demo/foos/foos.controller
 //= require spa-demo/foos/foos.directive
+
+//= require spa-demo/states/states.module
+//= require spa-demo/states/states.service
+//= require spa-demo/states/states.controller
+//= require spa-demo/states/states.directive

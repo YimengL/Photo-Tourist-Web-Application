@@ -14,7 +14,6 @@
     .state("home", {
       url: "/",
       templateUrl: APP_CONFIG.main_page_html
-      // controller:
     })
 
     $urlRouterProvider.otherwise("/");
