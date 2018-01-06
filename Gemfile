@@ -16,10 +16,17 @@ group :development do
 end
 
 group :development, :test do
-  gem 'httparty',         '~>0.14', '>=0.14.0'
-  gem 'byebug',           '~>9.0', '>=9.0.6'
-  gem 'pry-byebug',       '~>3.4', '>=3.4.0'
-  gem 'rspec-rails',      '~>3.5', '>=3.5.2'
+  gem 'httparty',             '~>0.14', '>=0.14.0'
+  gem 'byebug',               '~>9.0', '>=9.0.6'
+  gem 'pry-byebug',           '~>3.4', '>=3.4.0'
+  gem 'rspec-rails',          '~>3.5', '>=3.5.2'
+  gem 'mongoid-rspec',        '~>3.0', '>=3.0.0'
+  gem 'capybara',             '~>2.10', '>=2.10.1'
+  gem 'poltergeist',          '~>1.11', '>=1.11.0'
+  gem 'selenium-webdriver',   '~>2.53', '>=2.53.4'
+  gem 'chromedriver-helper',  '~>1.0', '>=1.0.0'
+  gem 'launchy',              '~>2.4', '>=2.4.3'
+  gem 'simplecov',            '~>0', '>=0.12', :require => false
 end
 
 group :production do
@@ -29,6 +36,9 @@ end
 gem 'puma',               '~>3.6', '>=3.6.0' #, :platform=>:ruby
 gem 'pg',                 '~>0.19', '>=0.19.0'
 gem 'mongoid',            '~>5.1', '>=5.1.5'
+gem 'database_cleaner',   '~>1.5', '>=1.5.3'
+gem 'factory_girl_rails', '~>4.7', '>=4.7.0'
+gem 'faker',              '~>1.6', '>=1.6.6'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-bootstrap',           '~>3.3', '>=3.3.7'

@@ -1,5 +1,6 @@
 class BarsController < ApplicationController
   before_action :set_bar, only: [:show, :update, :destroy]
+  wrap_parameters :foo, include: ["name"]
 
   # GET /bars
   # GET /bars.json

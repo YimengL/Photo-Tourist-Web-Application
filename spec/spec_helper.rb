@@ -12,8 +12,50 @@
 # the additional setup, and require it from the spec files that actually need
 # it.
 #
+
+require 'mongoid-rspec'
+require 'capybara/rspec'
+require 'capybara/poltergeist'
+require_relative 'support/database_cleaner.rb'
+require_relative 'support/api_helper.rb'
+
+browser = :chrome
+Capybara.register_driver :selenium do |app|
+  if browser == :chrome
+    Capybara::Selenium::Driver.new(app, :browser => :chrome)
+  else
+    Capybara::Selenium::Driver.new(app, :browser => :firefox)
+  end
+end
+
+# Set the default driver
+Capybara.configure do |config|
+  config.default_driver = :rack_test
+  # used when :js => true
+  config.javascript_driver = :poltergeist
+end
+
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(app,
+    phantomjs_logger: StringIO.new,
+#    logger: STDERR
+  )
+end
+
+if ENV["COVERAGE"]
+  require 'simplecov'
+  SimpleCov.start do
+    add_filter "/spec"
+    add_filter "/config"
+    add_group "foos", ["foo"]
+    add_group "bars", ["bar"]
+  end
+end
+
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
+  config.include Mongoid::Matchers, :orm => :mongoid
+  config.include ApiHelper, :type => :request
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

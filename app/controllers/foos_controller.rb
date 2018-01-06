@@ -1,5 +1,6 @@
 class FoosController < ApplicationController
   before_action :set_foo, only: [:show, :update, :destroy]
+  wrap_parameters :foo, include: ["name"]
 
   def index
     @foos = Foo.all
@@ -17,7 +18,7 @@ class FoosController < ApplicationController
       # render json: @foo, status: :created, location: @foo
       render :show, status: :created, location: @foo
     else
-      # render json: @foo.errors, status: :unprocessable_entity
+      render json: @foo.errors, status: :unprocessable_entity
     end
   end
 
