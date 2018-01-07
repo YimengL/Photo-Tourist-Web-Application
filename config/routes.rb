@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  get 'authn/whoami'
+
+  get 'authn/checkme'
+
+  mount_devise_token_auth_for 'User', at: 'auth'
   scope :api, defaults: {format: :json} do
     resources :foos, except: [:new, :edit]
     resources :bars, except: [:new, :edit]
