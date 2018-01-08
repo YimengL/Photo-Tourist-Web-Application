@@ -46,6 +46,12 @@ module ApiHelper
     @last_tokens || {}
   end
 
+  def logout status=:ok
+    jdelete destroy_user_session_path
+    @last_tokens = {}
+    expect(response).to have_http_status(status) if status
+  end
+
 end
 
 RSpec.shared_examples "resource index" do |model|
@@ -57,7 +63,7 @@ RSpec.shared_examples "resource index" do |model|
     expect(request.method).to eq("GET")
     expect(response).to have_http_status(:ok)
     expect(response.content_type).to eq("application/json")
-
+    # pp payload
     expect(payload.count).to eq(resources.count)
     response_check if respond_to?(:response_check)
   end
@@ -72,6 +78,7 @@ RSpec.shared_examples "show resource" do |model|
     get send("#{model}_path", resource.id)
     expect(response).to have_http_status(:ok)
     expect(response.content_type).to eq("application/json")
+    # pp payload
     response_check if respond_to?(:response_check)
   end
 
@@ -80,10 +87,60 @@ RSpec.shared_examples "show resource" do |model|
     expect(response).to have_http_status(:not_found)
     expect(response.content_type).to eq("application/json")
 
-    payload = parsed_body
+    # payload = parsed_body
+    # pp payload
     expect(payload).to have_key("errors")
     expect(payload["errors"]).to have_key("full_messages")
     expect(payload["errors"]["full_messages"][0]).
      to include("cannot", "#{bad_id}")
+  end
+end
+
+RSpec.shared_examples "create resource" do |model|
+  let(:resource_state)    { FactoryGirl.attributes_for(model) }
+  let(:payload)           { parsed_body }
+  let(:resource_id)       { payload["id"] }
+
+  it "can create valid #{model}" do
+    jpost send("#{model}s_path"), resource_state
+    expect(response).to have_http_status(:created)
+    expect(response.content_type).to eq("application/json")
+
+    # verify payload has ID and delegate for addition checks
+    expect(payload).to have_key("id")
+    response_check if respond_to?(:response_check)
+
+    # verify we can locate the created instance in DB
+    jget send("#{model}_path", resource_id)
+    # pp payload
+    expect(response).to have_http_status(:ok)
+#    binding.pry
+  end
+end
+
+RSpec.shared_examples "modifiable resource" do |model|
+  let(:resource) do
+    jpost send("#{model}s_path"), FactoryGirl.attributes_for(model)
+    expect(response).to have_http_status(:created)
+    parsed_body
+  end
+  let(:new_state)   { FactoryGirl.attributes_for(model) }
+
+  it "can update #{model}" do
+    # change to new state
+    jput send("#{model}_path", resource["id"]), new_state
+    expect(response).to have_http_status(:no_content)
+    update_check if respond_to?(:update_check)
+  end
+
+  it "can be deleted" do
+    jhead send("#{model}_path", resource["id"])
+    expect(response).to have_http_status(:ok)
+
+    jdelete send("#{model}_path", resource["id"])
+    expect(response).to have_http_status(:no_content)
+
+    jhead send("#{model}_path", resource["id"])
+    expect(response).to have_http_status(:not_found)
   end
 end
