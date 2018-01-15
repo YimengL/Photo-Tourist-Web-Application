@@ -5,16 +5,15 @@ module ApiHelper
 
   # automates the passing of payload bodies as json
   ["post", "put", "patch", "get", "head", "delete"].each do |http_method_name|
-    define_method("j#{http_method_name}") do |path, params = {}, headers = {}|
-      if ["post", "put", "patch"].include? http_method_name
-        headers = headers.merge('Content-Type' => 'application/json') unless
-          params.empty?
+    define_method("j#{http_method_name}") do |path,params={},headers={}|
+      if ["post","put","patch"].include? http_method_name
+        headers=headers.merge('content-type' => 'application/json') if !params.empty?
         params = params.to_json
       end
       self.send(http_method_name,
-                path,
-                params,
-                headers.merge(access_tokens))
+            path,
+            params,
+            headers.merge(access_tokens))
     end
   end
 
@@ -50,6 +49,12 @@ module ApiHelper
     jdelete destroy_user_session_path
     @last_tokens = {}
     expect(response).to have_http_status(status) if status
+  end
+
+  def create_resource path, factory, status=:created
+    jpost path, FactoryGirl.attributes_for(factory)
+    expect(response).to have_http_status(status) if status
+    parsed_body
   end
 
 end
